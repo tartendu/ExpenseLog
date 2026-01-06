@@ -1,0 +1,33 @@
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Expense Manager</h3>
+            <p>Track your expenses, manage your budget, and achieve your financial goals.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+                {% if session.get('user_id') %}
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('expenses_page') }}">Expenses</a></li>
+                    <li><a href="{{ url_for('budgets_page') }}">Budgets</a></li>
+                    <li><a href="{{ url_for('reports_page') }}">Reports</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Support</h4>
+            <ul>
+                <li><a href="#" onclick="return false;">Help Center</a></li>
+                <li><a href="#" onclick="return false;">Privacy Policy</a></li>
+                <li><a href="#" onclick="return false;">Terms of Service</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Expense Manager. All rights reserved.</p>
+    </div>
+</footer>

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Budgets - Expense Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_modern.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Top Header Bar -->
+<div class="top-header-bar">
+    <div class="header-left">
+        <h1 class="page-title">Budget Management</h1>
+    </div>
+    <div class="header-right">
+        <div class="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="search-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+            <input type="text" placeholder="Search budgets..." />
+        </div>
+        <button class="header-icon-btn notification-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+            <span class="notification-badge">3</span>
+        </button>
+        <div class="header-user-info">
+            <div class="header-user-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+            </div>
+            <div class="header-user-details">
+                <p class="header-user-name">{{ session.get('email', 'User')[:20] }}</p>
+                <p class="header-user-role">Account</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modern-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h2 class="dashboard-title">Set and track your spending limits</h2>
+        </div>
+    </div>
+
+    <div class="dashboard-content-grid">
+        <div class="content-card" style="grid-column: span 2;">
+            <div class="card-header">
+                <h3>Your Budgets</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="header-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div id="budgetList" class="budget-list-container">
+                <p class="loading">Loading budgets...</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <h3>Overall Monthly Budget</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="header-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                </svg>
+            </div>
+            <p class="help-text" style="margin-bottom: 1rem; color: #64748b; font-size: 0.875rem;">Set your total monthly spending limit</p>
+            <form id="overallBudgetForm" class="quick-form">
+                <div class="form-group-modern">
+                    <label for="overallBudgetInput">Total Monthly Budget (₹)</label>
+                    <input type="number" id="overallBudgetInput" step="0.01" required placeholder="0.00">
+                </div>
+                <button type="submit" class="btn-modern btn-primary-modern">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="btn-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    Set Overall Budget
+                </button>
+            </form>
+        </div>
+
+        <div class="content-card" style="grid-column: span 2;">
+            <div class="card-header">
+                <h3>Category Budget</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="header-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                </svg>
+            </div>
+            <p class="help-text" style="margin-bottom: 1rem; color: #64748b; font-size: 0.875rem;">Set spending limits for specific categories</p>
+            <form id="budgetForm" class="quick-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group-modern">
+                    <label for="budgetCategory">Category</label>
+                    <select id="budgetCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Food">Food</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Education">Education</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group-modern">
+                    <label for="budgetAmount">Monthly Budget (₹)</label>
+                    <input type="number" id="budgetAmount" step="0.01" required placeholder="0.00">
+                </div>
+
+                <button type="submit" class="btn-modern btn-primary-modern" style="grid-column: 1 / -1;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="btn-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Set Category Budget
+                </button>
+            </form>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <h3>💡 Budget Tips</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="header-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                </svg>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                <li style="display: flex; align-items: start; gap: 0.5rem; color: #475569; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px; color: #667eea; flex-shrink: 0; margin-top: 2px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Start with essential categories like Food and Bills</span>
+                </li>
+                <li style="display: flex; align-items: start; gap: 0.5rem; color: #475569; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px; color: #667eea; flex-shrink: 0; margin-top: 2px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Keep 10-15% buffer for emergencies</span>
+                </li>
+                <li style="display: flex; align-items: start; gap: 0.5rem; color: #475569; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px; color: #667eea; flex-shrink: 0; margin-top: 2px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Review and adjust budgets monthly</span>
+                </li>
+                <li style="display: flex; align-items: start; gap: 0.5rem; color: #475569; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px; color: #667eea; flex-shrink: 0; margin-top: 2px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Track categories that exceed budget frequently</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/budgets.js') }}"></script>
+{% endblock %}

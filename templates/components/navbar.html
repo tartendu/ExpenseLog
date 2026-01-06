@@ -1,0 +1,15 @@
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a href="{{ url_for('dashboard') }}">
+            <h1>Expense Manager</h1>
+        </a>
+    </div>
+    <div class="navbar-menu">
+        <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+        <a href="{{ url_for('expenses_page') }}" class="nav-link">Expenses</a>
+        <a href="{{ url_for('budgets_page') }}" class="nav-link">Budgets</a>
+        <a href="{{ url_for('reports_page') }}" class="nav-link">Reports</a>
+        <span class="user-email">{{ session.get('email') }}</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+    </div>
+</nav>
